@@ -1,0 +1,13 @@
+# Install a role from the Ansible Galaxy
+- src: cscfi.nis
+- src: cscfi.nfs
+
+# EPEL Repo
+- src: geerlingguy.repo-epel
+- src: geerlingguy.ntp
+
+# Install a role from GitHub
+# - name: opendaylight
+#   src: https://github.com/dfarrell07/ansible-opendaylight
+
+# TODO: slurm role

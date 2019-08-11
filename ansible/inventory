@@ -1,0 +1,24 @@
+[login]
+login01 ansible_host=10.1.1.101
+
+[slurm]
+slurm ansible_host=10.1.1.101 
+
+[computenodes]
+
+[slurmcompute:children]
+login
+computenodes
+
+[nisserver:children]
+slurm
+
+[nfsclients:children]
+login
+computenodes
+
+
+
+[all:vars]
+ansible_user = centos
+ansible_ssh_private_key_file = /root/.ssh/vm-admin
