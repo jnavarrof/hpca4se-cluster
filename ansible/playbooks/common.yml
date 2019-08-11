@@ -1,0 +1,42 @@
+---
+- hosts: all
+  become: True
+  vars:
+    packages:
+    - curl
+    - wget
+    - git
+    - unzip
+    - vim
+    - nmap-ncat
+    # - epel-release
+
+    # ntp_enabled: true
+    # ntp_timezone: Europe/Madrid 
+    chrony_timezone: Europe/Madrid
+    hosts_file_ansible_group_to_hosts_file: "{{ groups.all }}"
+    hosts_file_to_populate: "/tmp/hosts"
+
+  tasks:
+  # - name: upgrade all packages, excluding kernel
+  #  yum:
+  #    name: '*'
+  #    state: latest
+  #    exclude: kernel*
+  
+  - name: Update curl plackage to avoid EPEL TLS problem
+    yum: 
+      name: ['curl', 'ca-certificates'] 
+      state: latest 
+      # disablerepo: epel
+
+  - name: Other packages are installed
+    package: name={{packages}} state=present
+
+  # - name: Ensure a list of packages installed
+  #  yum:
+  #    name: "{{ packages }}"
+
+  roles:
+  - { role: chrony }
+  - { role: hosts-inventory}

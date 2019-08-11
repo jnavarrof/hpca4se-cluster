@@ -1,12 +1,12 @@
 
 requirements:
-	@ansible-galaxy install -r requirements.yml -p roles/
+	@ansible-galaxy install -r requirements.yml
 
 lint:
-	@ansible-lint -v playbooks/site.yml
+	@ansible-lint -v playbooks/main.yml
 
 ping:
 	@ansible all -m ping
 
 config:
-	@ansible-playbook playbooks/site.yml
+	@ansible-playbook playbooks/main.yml

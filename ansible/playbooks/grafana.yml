@@ -1,0 +1,48 @@
+---
+- hosts: Login
+  gather_facts: yes
+  become: true
+
+  vars:
+    # grafana_cert_crt: "{{ vault_grafana_cert_crt }}"
+    # grafana_cert_key: "{{ vault_grafana_cert_key }}"
+    #grafana_cert_crt: "{{ vault_bareos_pacs_server_tls_cert }}"
+    #grafana_cert_key: "{{ vault_bareos_pacs_server_tls_key }}"
+    grafana_server:
+      # protocol: https
+      enforce_domain: false
+      socket: ""
+      #cert_file: "{{ grafana_cert_crt_file }}"
+      #cert_key: "{{ grafana_cert_key_file }}"
+      enable_gzip: false
+      static_root_path: public
+      router_logging: false
+
+    grafana_security:
+      admin_user: "admin"
+      # TODO: vault password
+      admin_password: "admin"
+
+    grafana_datasources:
+      - name: prometheus
+        type: prometheus
+        access: proxy
+        url: 'http://127.0.0.1:9090'
+        basicAuth: false
+
+    grafana_dashboards:
+      # node exporter full
+      - dashboard_id: 1860
+        revision_id: 12
+        datasource: prometheus
+      # Prometheus Dashboard
+      - dashboard_id: 3662
+        revision_id: 2
+        datasource: prometheus
+      # Innodb metrics
+      - dashboard_id: 7365
+        revision_id: 1
+        datasource: prometheus
+
+  roles:
+    - ansible-role-grafana

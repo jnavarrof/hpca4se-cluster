@@ -1,0 +1,10 @@
+---
+- hosts: all
+  become: True
+
+  tasks: 
+  - name: upgrade all packages, excluding kernel
+    yum:
+      name: '*'
+      state: latest
+      exclude: kernel**

@@ -1,10 +1,29 @@
 # Install a role from the Ansible Galaxy
-- src: cscfi.nis
-- src: cscfi.nfs
+- name: nis
+  src: cscfi.nis
 
-# EPEL Repo
-- src: geerlingguy.repo-epel
-- src: geerlingguy.ntp
+- name: hosts-inventory
+  src: cscfi.hosts-inventory
+
+- name: nfs_mounts
+  src: https://github.com/CSCfi/ansible-role-nfs_mount.git
+  scm: git
+  version: master
+
+- name: prometheus
+  src: cloudalchemy.prometheus
+
+- name: node-exporter
+  src: cloudalchemy.node-exporter
+
+- name: mysqld-exporter
+  src: cloudalchemy.mysqld_exporter
+
+- name: grafana
+  src: cloudalchemy.grafana
+
+- name: chrony
+  src: unxnn.chrony
 
 # Install a role from GitHub
 # - name: opendaylight

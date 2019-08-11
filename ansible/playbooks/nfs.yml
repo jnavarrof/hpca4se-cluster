@@ -1,0 +1,17 @@
+---
+- hosts: nfs_clients
+  become: True
+  vars:
+    nfs_mount_addr: "nfs.hpca4se.uab.cat"
+    nfs_mount_opts: "_netdev,hard,ac,actimeo=300,lookupcache=none,cto,timeo=14,intr,exec,rsize=32768,wsize=32768,noatime,nodiratime"
+    # nfs.hpca4se.uab.cat:/home /home nfs _netdev,hard,ac,actimeo=300,lookupcache=none,cto,timeo=14,intr,exec,rsize=32768,wsize=32768,noatime,nodiratime 0 0
+    # nfs.hpca4se.uab.cat:/opt /opt nfs _netdev,hard,ac,actimeo=300,lookupcache=none,cto,timeo=14,intr,rsize=32768,wsize=32768,noatime,nodiratime 0 0
+    # nfs.hpca4se.uab.cat:/projects /projects nfs _netdev,hard,ac,actimeo=300,lookupcache=none,cto,timeo=14,intr,exec,rsize=32768,wsize=32768,noatime,nodiratime 0 0
+    # nfs.hpca4se.uab.cat:/home /home nfs _netdev,hard,ac,actimeo=300,lookupcache=none,cto,timeo=14,intr,exec,rsize=32768,wsize=32768,noatime,nodiratime 0 0
+    nfs_mounts:
+    - { fstype: "nfs4", name: "/remote/home", src: "{{ nfs_mount_addr }}:/home", state: "mounted", opts: "{{ nfs_mount_opts }}"  }
+    - { fstype: "nfs4", name: "/opt", src: "{{ nfs_mount_addr }}:/opt", state: "mounted", opts: "{{ nfs_mount_opts }}"  }
+    - { fstype: "nfs4", name: "/projects", src: "{{ nfs_mount_addr }}:/projects", state: "mounted", opts: "{{ nfs_mount_opts }}"  }
+  
+  roles:
+  - { role: nfs_mounts }

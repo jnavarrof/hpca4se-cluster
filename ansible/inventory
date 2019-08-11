@@ -1,23 +1,30 @@
 [login]
 login01 ansible_host=10.1.1.101
 
+[monitor]
+login01 ansible_host=10.1.1.101
+
 [slurm]
-slurm ansible_host=10.1.1.101 
+slurm-ohpc ansible_host=10.1.1.11 
 
-[computenodes]
+[compute_nodes]
+slurm-vm1 ansible_hosts=10.1.1.103
 
-[slurmcompute:children]
+[slurm_compute:children]
 login
-computenodes
+compute_nodes
 
-[nisserver:children]
+[nis_servers:children]
 slurm
 
-[nfsclients:children]
+[nis_clients:children]
 login
-computenodes
+compute_nodes
 
 
+[nfs_clients:children]
+login
+compute_nodes
 
 [all:vars]
 ansible_user = centos

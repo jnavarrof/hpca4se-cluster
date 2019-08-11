@@ -1,0 +1,50 @@
+---
+- hosts: nis_servers
+  become: True
+
+  vars:
+    hpca4se_groups: [ 'g_hpca4se']
+    hpca4se_users:
+    - "jnavarro" 
+    hpca4se_delete_users:
+    - "foo"
+    - "bar" 
+
+  tasks:
+  - name: Check hpc4se groups
+    group:
+      name: "{{ item }}"
+      state: present
+    with_items: "{{ hpca4se_groups }}"
+
+  - name: Ensure all hpca4se users are present
+    user: 
+      name: "{{ item }}"
+      shell: /bin/bash
+      groups: "{{ hpca4se_groups }}"
+      append: yes
+      create_home: True
+      home: "/remote/home/{{ item }}"
+      generate_ssh_key: True
+      state: present
+    register: users
+    with_items: "{{ hpca4se_users }}"
+
+  - name: Set authorized key taken from file
+    authorized_key:
+      user: "{{ item }}"
+      state: present
+      key: "{{ lookup('file', 'keys/hpca4se_users_rsa.pub') }}"
+      key_options: 'no-port-forwarding,from="10.1.1.1"'
+    with_items: "{{ hpca4se_users }}"
+
+  - name: Remove users in hpca4se_delete_users
+    user: 
+      name: "{{ item }}"
+      state: absent
+    register: delete_users
+    with_items: "{{ hpca4se_delete_users }}"
+
+  - name: Rebuild YP database
+    command:  "make -C /var/yp"
+    when: users.changed or delete_users.changed

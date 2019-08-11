@@ -1,0 +1,29 @@
+---
+# Common packages and tools
+- import_playbook: common.yml
+  tags: common
+
+# - import_playbook: cve-remediations.yml
+#   tags:
+#     - security
+#    - remediations
+
+# Monitoring
+# - import_playbook: prometheus.yml
+#  tags: monitoring
+
+# Install NIS auth configuration
+- import_playbook: nis.yml
+  tags: nis
+
+# Configure NFS
+- import_playbook: nfs.yml
+  tags: nfs
+
+# Add remove users and groups
+- import_playbook: users.yml
+  tags: users
+
+# Configure the SLURM cluster
+# Add remove SLURM accounts
+# Launch SLURM tests

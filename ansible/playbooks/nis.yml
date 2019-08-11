@@ -1,0 +1,27 @@
+---
+- hosts: nis_servers
+  gather_facts: True
+  become: True
+
+  vars:
+    nis_enabled: True
+    nis_initialize: True
+    nis_server: True
+    nis_domain: "hpca4se"
+
+  roles:
+  - { role: nis }
+
+- hosts: nis_clients
+  gather_facts: True
+  become: True
+
+  vars:
+    nis_enabled: True
+    # nis_initialize: True
+    # nis_server: False
+    nis_domain: "hpca4se"
+    nis_server_address: "{{ hostvars[groups['nis_servers'][0]]['ansible_host'] }}"
+
+  roles:
+  - { role: nis }
