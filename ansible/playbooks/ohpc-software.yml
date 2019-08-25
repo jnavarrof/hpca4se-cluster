@@ -1,0 +1,61 @@
+---
+- hosts:
+  - login
+  - slurm
+  - compute_nodes 
+  gather_facts: False
+  become: True
+  vars:
+    ohpc_package_url: "http://github.com/openhpc/ohpc/releases/download/v1.3.GA/ohpc-release-1.3-1.el7.x86_64.rpm"
+  tasks:
+  - name: Get OpenHPC repo
+    get_url:
+      url: "{{ ohpc_package_url }}"
+      dest: "/tmp/openhpc.rpm"
+
+  - name: Install OpenHPC repo
+    package:
+      state: present
+      pkg: "/tmp/openhpc.rpm"
+
+- hosts:
+  - login
+  - compute_nodes 
+  gather_facts: False
+  become: True
+  vars:
+    ohpc_software_groups:
+    - ohpc-autotools
+    - ohpc-io-libs-gnu
+    - ohpc-parallel-libs-gnu
+    - ohpc-parallel-libs-gnu-mpich
+    - ohpc-parallel-libs-gnu-mvapich2
+    - ohpc-parallel-libs-gnu-openmpi
+    - ohpc-perf-tools-gnu
+    - ohpc-python-libs-gnu
+    - ohpc-runtimes-gnu
+    - ohpc-serial-libs-gnu
+
+    ohpc_software_packages:
+    - valgrind-ohpc
+    - singularity
+    - mlocate
+    - lmod-ohpc
+
+  tasks:
+  - name: Install Slurm OHPC package groups
+    yum:
+      name: "@{{ item }}" 
+      state: present
+    with_items: "{{ ohpc_software_groups }}"
+    when:
+    - ohpc_software_groups.0 != ""
+
+  - name: install common Slurm OHPC packages
+    package: 
+      name: "{{ item }}" 
+      state: present
+    with_items: "{{ ohpc_software_packages }}"
+    when:
+    - ohpc_software_packages.0 != ""
+

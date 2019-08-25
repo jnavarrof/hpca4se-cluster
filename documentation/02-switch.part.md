@@ -82,5 +82,8 @@ Save startup-config or running-config
 
     sw1> enable
     sw1e# config
-    copy running-config tftp://10.1.1.1 tftp://192.168.0.1/backup
-    copy startup-config tftp://10.1.1.1 tftp://192.168.0.1/backup
+    copy running-config tftp://10.1.1.1/backup
+    copy startup-config tftp://10.1.1.1/backup
+
+
+<div style="page-break-after: always;"></div>

@@ -1,1 +1,4 @@
+ansible/playbooks/keys/*_rsa
+ansible/playbooks/keys/*_rsa.pub
+virsh-files/
 ansible/roles/*

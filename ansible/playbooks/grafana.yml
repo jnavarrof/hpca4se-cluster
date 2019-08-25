@@ -1,4 +1,51 @@
 ---
+- hosts: all
+  gather_facts: yes
+  become: true
+  roles:
+    - node-exporter
+
+- hosts: slurm
+  gather_facts: yes
+  become: true
+  roles:
+    - ansible-role-slurm-exporter
+
+- hosts: Login
+  gather_facts: yes
+  become: true
+
+  vars:
+    prometheus_slurm_exporter: "{{ groups['slurm_master'] | map('extract',hostvars,'ansible_nodename') | list }}"
+    prometheus_target_nodes: "{{ groups['all'] | map('extract',hostvars,'ansible_nodename') | list }}"
+    prometheus_scrape_configs:
+      - job_name: "prometheus"    # Custom scrape job, here using `static_config`
+        metrics_path: "/metrics"
+        static_configs:
+          - targets:
+              - "127.0.0.1:9090"
+      - job_name: 'slurm_exporter'
+        scrape_interval:  30s
+        scrape_timeout:   30s
+        static_configs:
+          - targets: "{{ slurm_exporter }}"
+      - job_name: 'node'
+        static_configs:
+          - targets: "{{node_targets}}"
+
+  pre_tasks:
+    - name: Init a node target empty list
+      set_fact:
+        node_targets: []
+
+    - name: Create node exporter targets from inventory
+      set_fact:
+        node_targets: "{{ node_targets }} + [ '{{item}}:9100' ]"
+      with_items: "{{ prometheus_target_nodes | list }}"
+  roles:
+    - role: prometheus
+
+
 - hosts: Login
   gather_facts: yes
   become: true

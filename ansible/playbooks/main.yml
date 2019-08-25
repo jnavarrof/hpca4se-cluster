@@ -24,6 +24,10 @@
 - import_playbook: users.yml
   tags: users
 
+# Install OHPC repo and pacakages
+
 # Configure the SLURM cluster
+
 # Add remove SLURM accounts
+
 # Launch SLURM tests
