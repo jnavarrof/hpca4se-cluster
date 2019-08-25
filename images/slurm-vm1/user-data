@@ -1,0 +1,78 @@
+#cloud-config
+ 
+# Hostname management
+preserve_hostname: False
+hostname: slurm-vm1
+fqdn: slurm-vm1.hpca4se.uab.cat
+
+# Users
+users:
+    - default
+    - name: centos
+      groups: ['adm']
+      shell: /bin/bash
+      sudo: ALL=(ALL) NOPASSWD:ALL
+      ssh-authorized-keys:
+        - ssh-ed25519  VM Login ssh key
+
+chpasswd:
+  list: |
+    centos:password
+  expire: False
+
+# Configure where output will go
+output:
+  all: ">> /var/log/cloud-init.log"
+
+# configure interaction with ssh server
+ssh_genkeytypes: ['ed25519', 'rsa']
+
+# Install my public ssh key to the first user-defined user configured
+# in cloud.cfg in the template (which is centos for CentOS cloud images)
+ssh_authorized_keys:
+  - ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIIOz/uPcl1fuPaxr8yvv4mceLGzH5z/j8ZTT+k2IF+GS VM Login ssh key
+
+# set timezone for VM
+timezone: Europe/Madrid
+
+# DNS config
+# search hpca4se.uab.cat
+# domain hpca4se.uab.cat
+# nameserver 10.1.1.8
+# options timeout:1
+# options attempts:3
+# options rotate 
+manage_resolv_conf: true
+resolv_conf:
+  nameservers: ['10.1.1.8']
+  searchdomains:
+    - hpca4se.uab.cat
+    - uab.cat
+  domain: hpca4se.uab.cat
+  options:
+    rotate: true
+    timeout: 1
+    attemps: 3
+
+# Aliases: apt_upgrade
+# package_upgrade: true
+
+# Remove cloud-init
+runcmd:
+  # Network configuration is not working neither in user-data nor meta-data
+  - echo "TYPE=Ethernet" > /etc/sysconfig/network-scripts/ifcfg-eth0
+  - echo "BOOTPROTO=static" >> /etc/sysconfig/network-scripts/ifcfg-eth0
+  - echo "DEFROUTE=yes" >> /etc/sysconfig/network-scripts/ifcfg-eth0
+  - echo "PEERDNS=yes" >> /etc/sysconfig/network-scripts/ifcfg-eth0
+  - echo "PEERROUTES=yes" >> /etc/sysconfig/network-scripts/ifcfg-eth0
+  - echo "IPV6INIT=no" >> /etc/sysconfig/network-scripts/ifcfg-eth0
+  - echo "NAME=eth0" >> /etc/sysconfig/network-scripts/ifcfg-eth0
+  - echo "DEVICE=eth0" >> /etc/sysconfig/network-scripts/ifcfg-eth0
+  - echo "ONBOOT=yes" >> /etc/sysconfig/network-scripts/ifcfg-eth0
+  - echo "IPADDR=10.1.1.103" >> /etc/sysconfig/network-scripts/ifcfg-eth0
+  - echo "NETMASK=255.255.255.0" >> /etc/sysconfig/network-scripts/ifcfg-eth0
+  - echo "BROADCAST=10.1.1.255" >> /etc/sysconfig/network-scripts/ifcfg-eth0
+  - echo "NM_CONTROLLED=no" >> /etc/sysconfig/network-scripts/ifcfg-eth0
+  - echo "ZONE=public" >> /etc/sysconfig/network-scripts/ifcfg-eth0
+  - systemctl stop network && systemctl start network
+  - yum -y remove cloud-init
